@@ -188,34 +188,99 @@ console.log(doubleArrayElements([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
 //   return output;
 // }
 
-// Refactor into a for of loop
-function charCounter(str) {
-  let output = {};
-  for (let char of str) {
-    char = char.toLowerCase();
-    // if (/[a-z0-9]/.test(char)) {
-    if (isAlphaNum(char)) {
-      output[char] > 0 ? output[char]++ : (output[char] = 1);
-    } else {
-      output[char] = "x";
-    }
-  }
-  return output;
-}
+//// Refactor into a for of loop
+// function charCounter(str) {
+//   let output = {};
+//   for (let char of str) {
+//     char = char.toLowerCase();
+//     // if (/[a-z0-9]/.test(char)) {
+//     if (isAlphaNum(char)) {
+//       output[char] > 0 ? output[char]++ : (output[char] = 1);
+//     } else {
+//       output[char] = "x";
+//     }
+//   }
+//   return output;
+// }
 
-function isAlphaNum(char) {
-  let code = char.charCodeAt(0);
-  if (
-    !(code > 47 && code < 58) &&
-    !(code > 64 && code < 91) &&
-    !(code > 96 && code < 123)
-  ) {
+// function isAlphaNum(char) {
+//   let code = char.charCodeAt(0);
+//   if (
+//     !(code > 47 && code < 58) &&
+//     !(code > 64 && code < 91) &&
+//     !(code > 96 && code < 123)
+//   ) {
+//     return false;
+//   }
+//   return true;
+// }
+
+// let result = charCounter("Hello, Rila. You are cute and you are 31.");
+// let other = charCounter("Madison");
+// console.log(result);
+// console.log(other);
+
+//// Frequency counters: Uses objects to collect values / frequency of values; Usually O(n) time and avoids
+//// nested loops or O(n^2) operations with arrays / strings
+
+//// Write a function called "same", which accepts two arrays. The function should return true if every value in the
+//// first array has its corresponding value squared in the second array. The frequency of values must be the same.
+//// same([1, 2, 3], [4, 1, 9]) // true because it has the same frequency of squares even if not in the same order
+//// same([1, 2, 3], [1, 9]) // false as it only has two of them, not the square for 2
+//// same([1, 2, 1], [4, 4, 1]) // false as it does have the squares of 1 and 2 but should have the same frequency, so the quare of 1 twice
+
+// function same(arrOne, arrTwo) {
+//   const map = arrOne.map((n) => n * n);
+//   if (map.length === arrTwo.length && map.values === arrTwo.values) {
+//     return true;
+//   } else {
+//     return false;
+//   }
+// }
+
+// console.log(same([1, 2, 1], [4, 4, 3]));
+
+//// A naive solution (is 0(n^2))
+function sameNaive(arrOne, arrTwo) {
+  if (arrOne.length !== arrTwo.length) {
     return false;
+  }
+  for (let i = 0; i < arrOne.length; i++) {
+    let correctIndex = arrTwo.indexOf(arrOne[i] ** 2);
+    if (correctIndex === -1) {
+      return false;
+    }
+    console.log(arrTwo);
+    arrTwo.splice(correctIndex, 1);
+  }
+  return true;
+}
+console.log(sameNaive([1, 2, 3, 2], [9, 1, 4, 4]));
+
+//// A refactored solution using frequency counter pattern
+function sameFreq(arr1, arr2) {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+  let freqCounter1 = {};
+  let freqCounter2 = {};
+  for (let val of arr1) {
+    freqCounter1[val] = (freqCounter1[val] || 0) + 1;
+  }
+  for (let val of arr2) {
+    freqCounter2[val] = (freqCounter2[val] || 0) + 1;
+  }
+  console.log(freqCounter1);
+  console.log(freqCounter2);
+  for (let key in freqCounter1) {
+    if (!(key ** 2 in freqCounter2)) {
+      return false;
+    }
+    if (freqCounter2[key ** 2] !== freqCounter1[key]) {
+      return false;
+    }
   }
   return true;
 }
 
-let result = charCounter("Hello, Rila. You are cute and you are 31.");
-let other = charCounter("Madison");
-console.log(result);
-console.log(other);
+console.log(sameFreq([1, 2, 3, 2, 5], [9, 1, 4, 4, 11]));
