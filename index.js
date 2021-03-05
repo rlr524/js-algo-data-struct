@@ -240,47 +240,126 @@ console.log(doubleArrayElements([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
 
 // console.log(same([1, 2, 1], [4, 4, 3]));
 
-//// A naive solution (is 0(n^2))
-function sameNaive(arrOne, arrTwo) {
-  if (arrOne.length !== arrTwo.length) {
-    return false;
-  }
-  for (let i = 0; i < arrOne.length; i++) {
-    let correctIndex = arrTwo.indexOf(arrOne[i] ** 2);
-    if (correctIndex === -1) {
-      return false;
-    }
-    console.log(arrTwo);
-    arrTwo.splice(correctIndex, 1);
-  }
-  return true;
-}
-console.log(sameNaive([1, 2, 3, 2], [9, 1, 4, 4]));
+// //// A naive solution (is 0(n^2))
+// function sameNaive(arrOne, arrTwo) {
+// 	if (arrOne.length !== arrTwo.length) {
+// 		return false;
+// 	}
+// 	for (let i = 0; i < arrOne.length; i++) {
+// 		let correctIndex = arrTwo.indexOf(arrOne[i] ** 2);
+// 		if (correctIndex === -1) {
+// 			return false;
+// 		}
+// 		console.log(arrTwo);
+// 		arrTwo.splice(correctIndex, 1);
+// 	}
+// 	return true;
+// }
+// let t1 = performance.now();
+// console.log(sameNaive([1, 2, 3, 2], [9, 1, 4, 4]));
+// let t2 = performance.now();
+// console.log(t2 - t1);
 
-//// A refactored solution using frequency counter pattern
-function sameFreq(arr1, arr2) {
-  if (arr1.length !== arr2.length) {
-    return false;
-  }
-  let freqCounter1 = {};
-  let freqCounter2 = {};
-  for (let val of arr1) {
-    freqCounter1[val] = (freqCounter1[val] || 0) + 1;
-  }
-  for (let val of arr2) {
-    freqCounter2[val] = (freqCounter2[val] || 0) + 1;
-  }
-  console.log(freqCounter1);
-  console.log(freqCounter2);
-  for (let key in freqCounter1) {
-    if (!(key ** 2 in freqCounter2)) {
-      return false;
-    }
-    if (freqCounter2[key ** 2] !== freqCounter1[key]) {
-      return false;
-    }
-  }
-  return true;
+// //// A refactored solution using frequency counter pattern
+// function sameFreq(arr1, arr2) {
+// 	if (arr1.length !== arr2.length) {
+// 		return false;
+// 	}
+// 	let freqCounter1 = {};
+// 	let freqCounter2 = {};
+// 	for (let val of arr1) {
+// 		freqCounter1[val] = (freqCounter1[val] || 0) + 1;
+// 	}
+// 	for (let val of arr2) {
+// 		freqCounter2[val] = (freqCounter2[val] || 0) + 1;
+// 	}
+// 	console.log(freqCounter1);
+// 	console.log(freqCounter2);
+// 	for (let key in freqCounter1) {
+// 		if (!(key ** 2 in freqCounter2)) {
+// 			return false;
+// 		}
+// 		if (freqCounter2[key ** 2] !== freqCounter1[key]) {
+// 			return false;
+// 		}
+// 	}
+// 	return true;
+// }
+
+// let t3 = performance.now();
+// console.log(sameFreq([1, 2, 3, 2], [9, 1, 4, 4]));
+// let t4 = performance.now();
+// console.log(t4 - t3);
+
+//// Anagram checker using frequency counter pattern
+
+function validAnagram(str1, str2) {
+	if (str1.length !== str2.length) {
+		return false;
+	}
+	let anagramCheckOne = {};
+	let anagramCheckTwo = {};
+	for (let val of str1) {
+		anagramCheckOne[val] = anagramCheckOne[val] || "";
+	}
+	for (let val of str2) {
+		anagramCheckTwo[val] = anagramCheckTwo[val] || "";
+	}
+	console.log(anagramCheckOne);
+	console.log(anagramCheckTwo);
+	for (let key in anagramCheckOne) {
+		if (!(key in anagramCheckTwo)) {
+			return false;
+		}
+		if (anagramCheckTwo[key] !== anagramCheckOne[key]) {
+			return false;
+		}
+	}
+	return true;
 }
 
-console.log(sameFreq([1, 2, 3, 2, 5], [9, 1, 4, 4, 11]));
+//FIXME: Not checking for frequency of each letter, only same letters and same length
+// Example: agentleman / elegentman passes because they have the same letters and length even though
+// not the same frequency of letters
+let string1 = "iceman";
+let string2 = "amnice";
+let result = validAnagram(string1, string2);
+let t1 = performance.now();
+console.log(result);
+let t2 = performance.now();
+console.log(t2 - t1);
+
+function validAnagramTwo(first, second) {
+	if (first.length !== second.length) {
+		return false;
+	}
+
+	const lookup = {};
+
+	for (let i = 0; i < first.length; i++) {
+		let letter = first[i];
+		// If letter exists, increment, otherwise set to 1
+		lookup[letter] ? (lookup[letter] += 1) : (lookup[letter] = 1);
+	}
+	console.log(lookup);
+
+	for (let i = 0; i < second.length; i++) {
+		let letter = second[i];
+		// Can't find the letter or letter is zero then it's not an anagram
+		if (!lookup[letter]) {
+			return false;
+		} else {
+			lookup[letter] -= 1;
+		}
+	}
+	console.log(lookup);
+	return true;
+}
+
+let string3 = "theclassroom";
+let string4 = "schoolmaster";
+let result2 = validAnagramTwo(string3, string4);
+let t3 = performance.now();
+console.log(result2);
+let t4 = performance.now();
+console.log(t4 - t3);
